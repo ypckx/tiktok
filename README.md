@@ -5,16 +5,16 @@
 视频文件和图片会分别存储在 public/video和public/pic下
 
 ## 不同模块介绍：
-**common** 中间件验证，响应结构体
-**config** 配置ip地址和数据库信息
-**handler** 处理器，决定下一步如何处理，并响应请求
-**model** 数据库模块，数据库交互，返回给service层
-**public** 上传视频的目录
-**response** 响应请求的封装
-**router** 路由处理
-**service** 业务逻辑，响应数据的封装，返回给handler层
-**utils**  工具类
-**main.go**  程序入口
+ **common** 中间件验证，响应结构体
+ **config** 配置ip地址和数据库信息
+ **handler** 处理器，决定下一步如何处理，并响应请求
+ **model** 数据库模块，数据库交互，返回给service层
+ **public** 上传视频的目录
+ **response** 响应请求的封装
+ **router** 路由处理
+ **service** 业务逻辑，响应数据的封装，返回给handler层
+ **utils**  工具类
+ **main.go**  程序入口
 ====================================================
 # tiktok
 第五届字节青训营项目-迷你版抖音

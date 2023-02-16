@@ -1,6 +1,7 @@
 package handler
 
 import (
+	"fmt"
 	"strconv"
 	"tiktok/response"
 	"tiktok/service"
@@ -90,4 +91,25 @@ func GetFollowerList(ctx *gin.Context) {
 		return
 	}
 	response.Success(ctx, "success", followerList)
+}
+
+// 所有关注登录用户的粉丝列表。
+func GetFriendList(ctx *gin.Context) {
+	tokens, _ := ctx.Get("UserId")
+	tokenUserId := tokens.(int64)
+	UserId := ctx.Query("user_id")
+	uid, err := strconv.ParseInt(UserId, 10, 64)
+	if err != nil {
+		response.Fail(ctx, err.Error(), nil)
+		return
+	}
+
+	fmt.Println("handler func-GetFriendList  uid:", uid, "  tokenUserId:", tokenUserId)
+	friendList, err := service.RelationFriendList(uid, tokenUserId)
+
+	if err != nil {
+		response.Fail(ctx, err.Error(), nil)
+		return
+	}
+	response.Success(ctx, "success", friendList)
 }

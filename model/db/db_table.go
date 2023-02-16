@@ -67,3 +67,16 @@ type Relation struct {
 func (Relation) TableName() string {
 	return "relations"
 }
+
+type Message struct {
+	// gorm.Model
+	MessageId int64  `gorm:"column:message_id; primary_key;"`
+	UserId    int64  `gorm:"column:user_id"`
+	ToUserId  int64  `gorm:"column:to_user_id"`
+	Content   string `gorm:"column:content"`
+	Time      int64  `gorm:"column:time"`
+}
+
+func (Message) TableName() string {
+	return "messages"
+}

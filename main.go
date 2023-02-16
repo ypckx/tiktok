@@ -3,6 +3,7 @@ package main
 import (
 	"fmt"
 	"tiktok/config"
+	"tiktok/message"
 	"tiktok/model/db"
 	"tiktok/router"
 
@@ -13,6 +14,7 @@ func main() {
 
 	db.InitDB()
 
+	go message.InitMessageServer()
 	r := gin.Default()
 
 	// 静态文件访问路径

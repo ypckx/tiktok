@@ -42,7 +42,7 @@ type User struct {
 type Message struct {
 	Id         int64  `json:"id,omitempty"`
 	Content    string `json:"content,omitempty"`
-	CreateTime string `json:"create_time,omitempty"`
+	CreateTime int64  `json:"create_time,omitempty"`
 }
 
 type MessageSendEvent struct {
@@ -115,7 +115,16 @@ type FollowerListResponse struct {
 	UserList []*User `json:"user_list,omitempty"`
 }
 
-type ChatResponse struct {
+type FriendListResponse struct {
+	Response
+	UserList []*User `json:"user_list,omitempty"`
+}
+
+type MessageActionResponse struct {
+	Response
+}
+
+type MessageListResponse struct {
 	Response
 	MessageList []*Message `json:"message_list"`
 }

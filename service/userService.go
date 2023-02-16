@@ -2,6 +2,7 @@ package service
 
 import (
 	"errors"
+	"fmt"
 	"tiktok/common"
 	"tiktok/model"
 
@@ -46,6 +47,7 @@ func UserLogin(userName, password string) (*common.UserLoginResponse, error) {
 	if err != nil {
 		return nil, errors.New("password error")
 	}
+	fmt.Println("username:", userName, " right================== pwd:", password)
 	token, err := common.GenToken(info.Id, userName)
 	if err != nil {
 		return nil, err
@@ -55,7 +57,7 @@ func UserLogin(userName, password string) (*common.UserLoginResponse, error) {
 		Token:  token,
 	}
 
-	// fmt.Println("[UserLogin++++++++++] user_id:", loginResponse.UserId, " token:", loginResponse.Token)
+	fmt.Println("[UserLogin++++++++++] user_id:", loginResponse.UserId, " token:", loginResponse.Token)
 	return loginResponse, nil
 }
 

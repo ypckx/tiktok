@@ -4,7 +4,7 @@ package config
 var ServerIp string = "100.92.36.136:8080"
 
 // 聊天服务器地址
-var MessageServerIp string = "100.92.36.136:9090"
+var MessageServerIp string = "100.92.36.136:8080"
 
 /********数据库配置信息**************
 

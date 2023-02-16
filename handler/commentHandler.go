@@ -51,12 +51,12 @@ func GetCommentList(ctx *gin.Context) {
 	var err error
 	video_id := ctx.Query("video_id")
 	/* token := ctx.Query("token")
-	_, err = util.VerifyToken(token)
-	if err != nil {
-		log.Errorf("token error : %s", err)
-		response.Fail(ctx, err.Error(), nil)
-		return
-	} */
+		_, err = util.VerifyToken(token)
+		if err != nil {
+			log.Errorf("token error : %s", err)
+	   		response.Fail(ctx, err.Error(), nil)
+			return
+		} */
 	videoId, err := strconv.ParseInt(video_id, 10, 64)
 	if err != nil {
 		fmt.Printf("videoId error : %s", err)

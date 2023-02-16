@@ -35,8 +35,15 @@ func setFavoriteRouter(r *gin.RouterGroup) {
 func setRelationRouter(r *gin.RouterGroup) {
 	relationRouter := r.Group("relation")
 	relationRouter.POST("/action/", common.AuthMiddleware(), handler.RelationAction)
+	relationRouter.GET("/friend/list", common.AuthWithOutMiddleware(), handler.GetFriendList)
 	relationRouter.GET("/follow/list", common.AuthWithOutMiddleware(), handler.GetFollowList)
 	relationRouter.GET("/follower/list", common.AuthWithOutMiddleware(), handler.GetFollowerList)
+}
+
+func setMessageRouter(r *gin.RouterGroup) {
+	messageRouter := r.Group("message")
+	messageRouter.POST("/action/", common.AuthMiddleware(), handler.MessageAction)
+	messageRouter.GET("/chat", common.AuthWithOutMiddleware(), handler.MessageChatList)
 }
 
 func InitRouter(r *gin.Engine) *gin.Engine {
@@ -47,6 +54,7 @@ func InitRouter(r *gin.Engine) *gin.Engine {
 	setCommentRouter(apiRouter)
 	setFavoriteRouter(apiRouter)
 	setRelationRouter(apiRouter)
+	setMessageRouter(apiRouter)
 
 	apiRouter.GET("/feed/", common.AuthWithOutMiddleware(), handler.FeedHandler)
 

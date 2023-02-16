@@ -46,6 +46,13 @@ func InitDB() {
 		panic(err)
 	}
 
+	err = dB.Set("gorm:table_options", table_options).
+		AutoMigrate(&Message{})
+
+	if err != nil {
+		panic(err)
+	}
+
 	fmt.Println("connect database OK!")
 }
 
@@ -54,5 +61,4 @@ func GetDB() *gorm.DB {
 }
 
 func CloseDB() {
-
 }

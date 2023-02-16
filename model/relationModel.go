@@ -141,6 +141,44 @@ func GetFollowList(userId int64, usertype string) ([]User, error) {
 	return list, nil
 }
 
+func GetFriendList(userId int64, usertype string) ([]User, error) {
+	/*
+		SELECT follow_id FROM
+		(
+		select
+			r1.follow_id,
+			r1.follower_id
+		FROM
+			relations r1  join relations r2
+		on r1.follow_id=r2.follower_id  and r1.follower_id=r2.follow_id) as t WHERE follower_id = 1;
+	*/
+	db := db.GetDB()
+	re := []Relation{}
+
+	result := db.Table("(?) as t", db.Table("relations r1").
+		Select("r1.follow_id,r1.follower_id").
+		Joins("join relations r2 on r1.follow_id = r2.follower_id and r1.follower_id = r2.follow_id")).
+		Where("t.follower_id = ?", userId).Find(&re)
+
+	if result.Error != nil {
+		fmt.Println("sql err:", result.Error)
+	} else {
+		fmt.Println("row:", result.RowsAffected)
+	}
+
+	// fmt.Println("===================userId:", userId)
+	list := make([]User, len(re))
+
+	for i, r := range re {
+
+		v, _ := GetUserInfo(r.Follow)
+		// fmt.Println("r.Follow:", r.Follow, " r.Follower:", r.Follower)
+		list[i] = v
+	}
+
+	return list, nil
+}
+
 // func CacheChangeUserCount(userid, op int64, ftype string) {
 // 	uid := strconv.FormatInt(userid, 10)
 // 	mutex, _ := common.GetLock("user_" + uid)

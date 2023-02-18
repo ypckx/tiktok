@@ -1,10 +1,10 @@
 package config
 
 // 服务器运行地址
-var ServerIp string = "100.92.36.136:8080"
+var ServerIp string = "100.92.8.6:8080"
 
 // 聊天服务器地址
-var MessageServerIp string = "100.92.36.136:8080"
+var MessageServerIp string = "100.92.8.6:8080"
 
 /********数据库配置信息**************
 

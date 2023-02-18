@@ -12,8 +12,6 @@ import (
 // messageRouter.POST("/action", common.AuthMiddleware(), handler.MessageAction)
 func MessageAction(ctx *gin.Context) {
 
-	fmt.Println("MessageAction------------- request:", ctx.Request.Header, "   body:", ctx.Request.Body)
-
 	var err error
 	tokenUids, _ := ctx.Get("UserId")
 

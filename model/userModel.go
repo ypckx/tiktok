@@ -11,14 +11,17 @@ import (
 
 type User struct {
 	// gorm.Model
-	Id       int64  `gorm:"column:user_id; primary_key;"`
-	Name     string `gorm:"column:user_name"`
-	Password string `gorm:"column:password"`
-	Follow   int64  `gorm:"column:follow_count"`
-	Follower int64  `gorm:"column:follower_count"`
-	Avatar   string `gorm:"column:avatar"`
-	TotalFav int64  `gorm:"column:total_favorited"`
-	FavCount int64  `gorm:"column:favorite_count"`
+	Id        int64  `gorm:"column:user_id; primary_key;"`
+	Name      string `gorm:"column:user_name"`
+	Password  string `gorm:"column:password"`
+	Follow    int64  `gorm:"column:follow_count"`
+	Follower  int64  `gorm:"column:follower_count"`
+	Avatar    string `gorm:"column:avatar"`
+	BackImage string `gorm:"column:background_image"`
+	Signature string `gorm:"column:signatuare"`
+	TotalFav  int64  `gorm:"column:total_favorited"`
+	WorkCount int64  `gorm:"column:work_count"`
+	FavCount  int64  `gorm:"column:favorite_count"`
 }
 
 func (User) TableName() string {
@@ -52,15 +55,18 @@ func InsertUser(userName, password string) (*User, error) {
 	hasedPassword, _ := bcrypt.GenerateFromPassword([]byte(password), bcrypt.DefaultCost)
 
 	avatarImg := utils.RandomAvatarImg()
-	fmt.Println("InsertUser RandomAvatarImg:", avatarImg)
+	// fmt.Println("InsertUser RandomAvatarImg:", avatarImg)
 	user := User{
-		Name:     userName,
-		Password: string(hasedPassword),
-		Follow:   0,
-		Follower: 0,
-		TotalFav: 0,
-		FavCount: 0,
-		Avatar:   avatarImg,
+		Name:      userName,
+		Password:  string(hasedPassword),
+		Follow:    0,
+		Follower:  0,
+		TotalFav:  0,
+		FavCount:  0,
+		WorkCount: 0,
+		Avatar:    avatarImg,
+		BackImage: utils.RandomBackgroundImg(),
+		Signature: utils.RandomSignature(),
 	}
 	result := db.Create(&user)
 	if result.Error != nil {

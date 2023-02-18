@@ -68,18 +68,22 @@ func UserInfo(userID int64) (*common.UserResponse, error) {
 		return nil, err
 	}
 	user := messageUserInfo(info)
+	// fmt.Println("userinfo 【获赞】:", user.FavoriteCount)
 	return &common.UserResponse{User: user}, nil
 }
 
 func messageUserInfo(info model.User) *common.User {
 	return &common.User{
-		Id:             info.Id,
-		Name:           info.Name,
-		FollowCount:    info.Follow,
-		FollowerCount:  info.Follower,
-		IsFollow:       false,
-		Avatar:         info.Avatar,
-		TotalFavorited: info.TotalFav,
-		FavoriteCount:  info.FavCount,
+		Id:              info.Id,
+		Name:            info.Name,
+		FollowCount:     info.Follow,
+		FollowerCount:   info.Follower,
+		IsFollow:        false,
+		Avatar:          info.Avatar,
+		TotalFavorited:  info.TotalFav,
+		FavoriteCount:   info.FavCount,
+		WorkCount:       info.WorkCount,
+		BackGroundImage: info.BackImage,
+		Signature:       info.Signature,
 	}
 }

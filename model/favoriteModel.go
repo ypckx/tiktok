@@ -47,6 +47,22 @@ func LikeAction(uid, vid int64) error {
 		return errors.New("update add favorite_count error")
 	}
 
+	// 点赞对用户的总点赞数影响和用户喜欢视频数的影响
+	var user User
+	err = db.Where("user_id = ?", uid).Find(&user).Error
+	if err != nil {
+		fmt.Println("点赞对用户的总点赞数影响 error:", err.Error())
+		return err
+	}
+
+	user.TotalFav = user.TotalFav + 1
+	user.FavCount = user.FavCount + 1
+	result = db.Model(&User{}).Where("user_id = ?", uid).
+		Updates(map[string]interface{}{"total_favorited": user.TotalFav + 1, "favorite_count": user.FavCount + 1})
+	if result.RowsAffected == 0 {
+		return errors.New("update add user total_favorited error")
+	}
+
 	// fmt.Println("LikeAction .......... favorite uid:", favorite.UserId, " vid:", favorite.VideoId)
 	// authorid, _ := CacheGetAuthor(vid)
 	// go func() {
@@ -80,6 +96,26 @@ func UnLikeAction(uid, vid int64) error {
 	} else {
 		fmt.Println("update sub video favorite_count : video.FavoriteCount == 0 error")
 	}
+
+	// 取消点赞对用户的总点赞数影响
+	var user User
+	err = db.Where("user_id = ?", uid).Find(&user).Error
+	if err != nil {
+		fmt.Println("点赞对用户的总点赞数影响 error:", err.Error())
+		return err
+	}
+
+	if user.TotalFav > 0 && user.FavCount > 0 {
+		result := db.Model(&User{}).Where("user_id = ?", uid).
+			Updates(map[string]interface{}{"total_favorited": user.TotalFav - 1, "favorite_count": user.FavCount - 1})
+		if result.RowsAffected == 0 {
+			return errors.New("update sub user total_favorited error")
+		}
+	} else {
+		fmt.Println("update sub user total_favorited : video.FavoriteCount == 0 error")
+	}
+
+	// 取消点赞对用户喜欢视频数的影响
 
 	// fmt.Println("UnLikeAction .......... uid:", uid, " vid:", vid)
 	// authorid, _ := CacheGetAuthor(vid)

@@ -2,14 +2,17 @@ package db
 
 type User struct {
 	// gorm.Model
-	Id       int64  `gorm:"column:user_id; primary_key;"`
-	Name     string `gorm:"column:user_name"`
-	Password string `gorm:"column:password"`
-	Follow   int64  `gorm:"column:follow_count"`
-	Follower int64  `gorm:"column:follower_count"`
-	Avatar   string `gorm:"column:avatar"`
-	TotalFav int64  `gorm:"column:total_favorited"`
-	FavCount int64  `gorm:"column:favorite_count"`
+	Id        int64  `gorm:"column:user_id; primary_key;"`
+	Name      string `gorm:"column:user_name"`
+	Password  string `gorm:"column:password"`
+	Follow    int64  `gorm:"column:follow_count"`
+	Follower  int64  `gorm:"column:follower_count"`
+	Avatar    string `gorm:"column:avatar"`
+	BackImage string `gorm:"column:background_image"`
+	Signature string `gorm:"column:signatuare"`
+	TotalFav  int64  `gorm:"column:total_favorited"`
+	WorkCount int64  `gorm:"column:work_count"`
+	FavCount  int64  `gorm:"column:favorite_count"`
 }
 
 func (User) TableName() string {

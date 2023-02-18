@@ -29,10 +29,7 @@ func MessageAction(userId, toUserId int64, content, actionType string) (*common.
 }
 
 func MessageList(userId, toUserId int64) (*common.MessageListResponse, error) {
-	// common.UserCurStateInfo[userId].State_HasNewMsg == true
 
-	// set false
-	// return nil, nil
 	var err error
 	var messages []model.Message = nil
 
@@ -43,9 +40,10 @@ func MessageList(userId, toUserId int64) (*common.MessageListResponse, error) {
 			v.State_HasReqFriends = false
 		} else {
 			if v.State_NewMsgCount == 0 {
-				fmt.Println("v.State_NewMsgCount == 0..........")
+				// fmt.Println("v.State_NewMsgCount == 0..........")
 				return &common.MessageListResponse{}, nil
 			}
+
 			// 和我对话的用户发给我的
 			messages, err = model.MessageList(toUserId, userId, v.State_NewMsgCount)
 			v.State_NewMsgCount = 0

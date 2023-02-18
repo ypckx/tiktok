@@ -69,3 +69,15 @@ func RandomAvatarImg() string {
 	index := rand.Intn(len(imgList))
 	return imgList[index]
 }
+
+func RandomBackgroundImg() string {
+	rand.Seed(time.Now().Unix())
+	index := rand.Intn(len(backgroundImgList))
+	return backgroundImgList[index]
+}
+
+func RandomSignature() string {
+	rand.Seed(time.Now().Unix())
+	index := rand.Intn(len(signatureList))
+	return signatureList[index]
+}

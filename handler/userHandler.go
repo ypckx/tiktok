@@ -74,6 +74,8 @@ func GetUserInfo(ctx *gin.Context) {
 		response.Fail(ctx, err.Error(), nil)
 		return
 	}
+
+	// fmt.Println("userinfo 【获赞】:", userinfo)
 	response.Success(ctx, "success", userinfo)
 
 }

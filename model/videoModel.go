@@ -1,6 +1,7 @@
 package model
 
 import (
+	"errors"
 	"fmt"
 	"tiktok/config"
 	"tiktok/model/db"
@@ -40,7 +41,25 @@ func InsertVideo(authorid int64, playurl, coverurl, title string) error {
 	if err != nil {
 		return err
 	}
-	fmt.Println("上传视频成功！。。。。。playurl:", playurl, "   coverurl:", coverurl, "  uid:", authorid)
+	fmt.Println("上传视频成功!。。。。。playurl:", playurl, "   coverurl:", coverurl, "  uid:", authorid)
+
+	// 上传视频对用户作品数的影响
+	var user User
+	err = db.Where("user_id = ?", authorid).Find(&user).Error
+	if err != nil {
+		fmt.Println("update user video count error!")
+		return errors.New("update user video count error")
+	}
+
+	fmt.Println("上传视频  uid:", authorid, "  before work_count:", user.WorkCount)
+
+	user.WorkCount = user.WorkCount + 1
+	err = db.Model(&User{}).Where("user_id = ?", authorid).Update("work_count", user.WorkCount).Error
+	if err != nil {
+		fmt.Println("add user video count error")
+		return errors.New("add user video count error")
+	}
+
 	return nil
 }
 

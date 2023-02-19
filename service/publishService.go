@@ -10,12 +10,8 @@ import (
 )
 
 func PublishVideo(userId int64, saveFile, title string) (*common.PublishActionResponse, error) {
-	// client := minioStore.GetMinio()
-	// videourl, err := client.UploadFile("video", saveFile, strconv.FormatInt(userId, 10))
 
-	// if err != nil {
-	// 	return nil, err
-	// }
+	// 获取视频封面图片
 	imageFile, err := GetImageFile(saveFile)
 
 	videoFile := strings.Split(imageFile, ".")[0]
@@ -23,19 +19,8 @@ func PublishVideo(userId int64, saveFile, title string) (*common.PublishActionRe
 	if err != nil {
 		return nil, err
 	}
-	// fmt.Println("++++++[publishService.go PublishVideo] imageFile:", imageFile, "  videoFile:", videoFile)
 
-	// return nil, errors.New("test image...")
-	// // log.Debugf("imageFile %v\n", imageFile)
-	// fmt.Printf("[func-PublishVideo] imageFile %v\n", imageFile)
-
-	// picurl, err := client.UploadFile("pic", imageFile, strconv.FormatInt(userId, 10))
-	// if err != nil {
-	// 	picurl = "https://p6-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/7909abe413ec4a1e82032d2beb810157~tplv-k3u1fbpfcp-zoom-in-crop-mark:1304:0:0:0.awebp?"
-	// }
-
-	// 数据库中存放的为文件名，不包含url路径
-
+	// 向数据库中存放文件名路径，不包含ip地址（相对路径）
 	err = model.InsertVideo(userId, videoFile, imageFile, title)
 	if err != nil {
 		return nil, err
@@ -45,7 +30,7 @@ func PublishVideo(userId int64, saveFile, title string) (*common.PublishActionRe
 }
 
 func PublishList(tokenUserId, userId int64) (*common.PublishListResponse, error) {
-	// videos, err := model.GetVideoList(userId)  =====
+	// 获取用户所有发布的视频
 	videos, err := model.GetVideoList(userId)
 	if err != nil {
 		return nil, err
@@ -57,6 +42,7 @@ func PublishList(tokenUserId, userId int64) (*common.PublishListResponse, error)
 	return list, nil
 }
 
+// 获取视频封面
 func GetImageFile(videoPath string) (string, error) {
 	temp := strings.Split(videoPath, "\\") // windows下使用\ ，linux下使用/
 	videoName := temp[len(temp)-1]
@@ -70,7 +56,6 @@ func GetImageFile(videoPath string) (string, error) {
 	if err != nil {
 		return "", err
 	}
-	// log.Debugf(picName)
-	// fmt.Println("[publishService func-GetImageFile] ", picName)
+
 	return videoName, nil
 }

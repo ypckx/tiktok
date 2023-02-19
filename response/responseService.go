@@ -38,7 +38,6 @@ func Fail(ctx *gin.Context, msg string, v interface{}) {
 		Response(ctx, 200, v)
 		ctx.Abort()
 	}
-
 }
 
 func setResponse(ctx *gin.Context, StatusCode int64, StatusMsg string, v interface{}) {

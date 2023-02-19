@@ -12,16 +12,16 @@ import (
 type User struct {
 	// gorm.Model
 	Id        int64  `gorm:"column:user_id; primary_key;"`
-	Name      string `gorm:"column:user_name"`
-	Password  string `gorm:"column:password"`
-	Follow    int64  `gorm:"column:follow_count"`
-	Follower  int64  `gorm:"column:follower_count"`
-	Avatar    string `gorm:"column:avatar"`
-	BackImage string `gorm:"column:background_image"`
-	Signature string `gorm:"column:signatuare"`
-	TotalFav  int64  `gorm:"column:total_favorited"`
-	WorkCount int64  `gorm:"column:work_count"`
-	FavCount  int64  `gorm:"column:favorite_count"`
+	Name      string `gorm:"column:user_name"`        // 用户名称
+	Password  string `gorm:"column:password"`         // 用户密码
+	Follow    int64  `gorm:"column:follow_count"`     // 用户关注数
+	Follower  int64  `gorm:"column:follower_count"`   // 粉丝数（关注我的用户数）
+	Avatar    string `gorm:"column:avatar"`           // 用户头像
+	BackImage string `gorm:"column:background_image"` // 主页背景图
+	Signature string `gorm:"column:signatuare"`       // 用户个性签名
+	TotalFav  int64  `gorm:"column:total_favorited"`  // 总获赞数
+	WorkCount int64  `gorm:"column:work_count"`       // 用户作品数
+	FavCount  int64  `gorm:"column:favorite_count"`   // 用户喜欢的视频数（点赞数）
 }
 
 func (User) TableName() string {
@@ -54,8 +54,6 @@ func InsertUser(userName, password string) (*User, error) {
 	db := db.GetDB()
 	hasedPassword, _ := bcrypt.GenerateFromPassword([]byte(password), bcrypt.DefaultCost)
 
-	avatarImg := utils.RandomAvatarImg()
-	// fmt.Println("InsertUser RandomAvatarImg:", avatarImg)
 	user := User{
 		Name:      userName,
 		Password:  string(hasedPassword),
@@ -64,7 +62,7 @@ func InsertUser(userName, password string) (*User, error) {
 		TotalFav:  0,
 		FavCount:  0,
 		WorkCount: 0,
-		Avatar:    avatarImg,
+		Avatar:    utils.RandomAvatarImg(),
 		BackImage: utils.RandomBackgroundImg(),
 		Signature: utils.RandomSignature(),
 	}

@@ -32,6 +32,7 @@ follower_count
 粉丝总数
 */
 
+// 关注操作，自己无法关注自己
 func FollowAction(userId, toUserId int64) error {
 	db := db.GetDB()
 	relation := Relation{
@@ -39,7 +40,6 @@ func FollowAction(userId, toUserId int64) error {
 		Follower: toUserId,
 	}
 
-	// err := db.Where("follow_id = ? and follower_id = ?", userId, toUserId).Find(&Relation{}).Error
 	result := db.Where("follow_id = ? and follower_id = ?", userId, toUserId).Find(&Relation{})
 
 	if result.RowsAffected != 0 {
@@ -48,9 +48,7 @@ func FollowAction(userId, toUserId int64) error {
 
 	err := db.Create(&relation).Error
 
-	if err == nil {
-		fmt.Println("关注成功 userid:", userId, "follow touserId:", toUserId, "   OK!")
-	} else {
+	if err != nil {
 		fmt.Println("关注失败 userid:", userId, "follow touserId:", toUserId, "   Error!")
 	}
 
@@ -63,6 +61,7 @@ func FollowAction(userId, toUserId int64) error {
 		return errors.New("[FollowAction] find user follow error")
 	}
 
+	// 更新关注用户和被关注用户的数量
 	err1 = db.Model(&User{}).Where("user_id = ?", userId).Update("follow_count", followUser.Follow+1).Error
 	err2 = db.Model(&User{}).Where("user_id = ?", toUserId).Update("follower_count", followerUser.Follower+1).Error
 	if err1 != nil || err2 != nil {
@@ -73,14 +72,13 @@ func FollowAction(userId, toUserId int64) error {
 	return nil
 }
 
+// 取消关注
 func UnFollowAction(userId, toUserId int64) error {
 	db := db.GetDB()
 	err := db.Where("follow_id = ? and follower_id = ?", userId, toUserId).Delete(&Relation{}).Error
 	if err != nil {
 		fmt.Println("取消关注失败 err:", err.Error())
 		return err
-	} else {
-		fmt.Println("取消关注成功: userId:", userId, "   unfollow:", toUserId)
 	}
 
 	var followerUser, followUser User
@@ -117,12 +115,7 @@ func UnFollowAction(userId, toUserId int64) error {
 func GetFollowList(userId int64, usertype string) ([]User, error) {
 	db := db.GetDB()
 	re := []Relation{}
-	// joinArg := "follower"
-	// if usertype == "follower" {
-	// 	joinArg = "follow"
-	// }
-	// err := db.Joins("left join relations on users.user_id = relations."+joinArg+"_id").
-	// 	Where("relations."+usertype+"_id = ?", userId).Find(&list).Error
+
 	err := db.Where("relations."+usertype+"_id = ?", userId).Find(&re).Error
 
 	if err == gorm.ErrRecordNotFound {
@@ -141,6 +134,7 @@ func GetFollowList(userId int64, usertype string) ([]User, error) {
 	return list, nil
 }
 
+// 获取朋友列表
 func GetFriendList(userId int64, usertype string) ([]User, error) {
 	/*
 		SELECT follow_id FROM
@@ -162,17 +156,12 @@ func GetFriendList(userId int64, usertype string) ([]User, error) {
 
 	if result.Error != nil {
 		fmt.Println("sql err:", result.Error)
-	} else {
-		fmt.Println("row:", result.RowsAffected)
 	}
 
-	// fmt.Println("===================userId:", userId)
+	// 获取返回封装的用户列表
 	list := make([]User, len(re))
-
 	for i, r := range re {
-
 		v, _ := GetUserInfo(r.Follow)
-		// fmt.Println("r.Follow:", r.Follow, " r.Follower:", r.Follower)
 		list[i] = v
 	}
 

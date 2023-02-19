@@ -19,6 +19,8 @@ func UserLogin(ctx *gin.Context) {
 		response.Fail(ctx, "username or password invalid", nil)
 		return
 	}
+
+	// 向服务层请求数据
 	loginResponse, err := service.UserLogin(userName, password)
 	if err != nil {
 		// log.Infof("login error : %s", err)
@@ -26,6 +28,7 @@ func UserLogin(ctx *gin.Context) {
 		response.Fail(ctx, err.Error(), nil)
 		return
 	}
+
 	response.Success(ctx, "success", loginResponse)
 }
 
@@ -37,8 +40,8 @@ func UserRegister(ctx *gin.Context) {
 		response.Fail(ctx, "username or password invalid", nil)
 		return
 	}
-	// fmt.Println("[handler UserRegister]", userName, "   ", password)
-	// return
+
+	// 向服务层请求数据
 	registResponse, err := service.UserRegister(userName, password)
 	if err != nil {
 		// log.Infof("registe error : %s", err)
@@ -46,6 +49,7 @@ func UserRegister(ctx *gin.Context) {
 		response.Fail(ctx, err.Error(), nil)
 		return
 	}
+
 	response.Success(ctx, "success", registResponse)
 
 }
@@ -67,6 +71,8 @@ func GetUserInfo(ctx *gin.Context) {
 		response.Fail(ctx, "token error", nil)
 		return
 	}
+
+	// 向服务层请求数据
 	userinfo, err := service.UserInfo(uid)
 	if err != nil {
 		// log.Infof("get userinfo  error : %s", err)
@@ -75,7 +81,5 @@ func GetUserInfo(ctx *gin.Context) {
 		return
 	}
 
-	// fmt.Println("userinfo 【获赞】:", userinfo)
 	response.Success(ctx, "success", userinfo)
-
 }

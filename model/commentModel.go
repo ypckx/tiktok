@@ -7,6 +7,7 @@ import (
 )
 
 type Comment struct {
+	// gorm.Model
 	CommentId int64  `gorm:"column:comment_id; primary_key;"`
 	UserId    int64  `gorm:"column:user_id"`
 	VideoId   int64  `gorm:"column:video_id"`
@@ -30,7 +31,7 @@ func CommentAdd(userId, videoId int64, comment_text string) (*Comment, error) {
 		return nil, result.Error
 	}
 
-	// add comment_count in videos
+	// 向视频表中添加评论数
 	var video Video
 	result = db.Where("video_id = ?", videoId).Find(&video)
 	if result.RowsAffected == 0 {
@@ -41,7 +42,6 @@ func CommentAdd(userId, videoId int64, comment_text string) (*Comment, error) {
 	if err != nil {
 		fmt.Println("[Model CommentAdd] update comment_count error")
 	}
-	// log.Infof("comment:%+v", comment)
 
 	// CacheDelCommentAll(videoId)
 
@@ -57,7 +57,7 @@ func CommentDelete(videoId, comment_id int64) error {
 		return err
 	}
 
-	// sub comment_count in Video
+	// 在视频中，减少对应评论数
 	var video Video
 	result := db.Where("video_id = ?", videoId).Find(&video)
 	if result.RowsAffected == 0 {
@@ -65,6 +65,7 @@ func CommentDelete(videoId, comment_id int64) error {
 		return result.Error
 	}
 
+	// 视频评论要存在
 	if video.CommentCount > 0 {
 		err = db.Model(&Video{}).Where("video_id = ?", videoId).Update("comment_count", video.CommentCount-1).Error
 	} else {
@@ -86,23 +87,11 @@ func CommentList(videoId int64) ([]Comment, error) {
 	var comments []Comment
 	db := db.GetDB()
 	var err error
-	/* c := common.GetRE()
-	values, _ := redis.Values(c.Do("lrange", videoId, "0", "-1"))
-	for _,v := range values{
-
-	} */
 
 	// comments, _ = CacheGetComment(videoId)
 	comments = nil
-	// log.Infof("comments-------------------------:%+v\n", comments)
 
-	/* if err == nil {
-		return comments, nil
-	} */
-	if comments != nil {
-		return comments, nil
-	}
-
+	// 显示最新评论
 	err = db.Where("video_id = ?", videoId).Order("comment_id DESC").Find(&comments).Error
 
 	// CacheSetComment(videoId, comments)

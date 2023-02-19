@@ -9,7 +9,6 @@ import (
 	"github.com/gin-gonic/gin"
 )
 
-// messageRouter.POST("/action", common.AuthMiddleware(), handler.MessageAction)
 func MessageAction(ctx *gin.Context) {
 
 	var err error
@@ -28,23 +27,21 @@ func MessageAction(ctx *gin.Context) {
 		response.Fail(ctx, err.Error(), nil)
 		return
 	}
-	//==================
-	fmt.Println("[handler MessageAction] =======> tokenUid:", toUserId, " to_user_id:", toUserId, " content:", content)
 
+	// 向服务层请求数据
 	messageResponse, err := service.MessageAction(tokenUid, toUserId, content, actionType)
-
 	if err != nil {
 		fmt.Printf("message action error : %s", err)
 		response.Fail(ctx, err.Error(), nil)
 		return
 	}
+
 	response.Success(ctx, "success", messageResponse)
 
 }
 
-// messageRouter.GET("/chat", common.AuthWithOutMiddleware(), handler.MessageChatList)
 func MessageChatList(ctx *gin.Context) {
-	// return
+
 	var err error
 	tokenUids, _ := ctx.Get("UserId")
 	tokenUid := tokenUids.(int64)
@@ -56,17 +53,23 @@ func MessageChatList(ctx *gin.Context) {
 		return
 	}
 
-	// add key-value to map struct
+	// 得到上次请求的最新时间
+	preMsgTimes := ctx.Query("pre_msg_time")
+	pre_msg_time, err := strconv.ParseInt(preMsgTimes, 10, 64)
+	if err != nil {
+		fmt.Println("parse preMsgTime error!")
+		response.Fail(ctx, err.Error(), nil)
+		return
+	}
 
-	//==================
-	// fmt.Println("[handler MessageChatList]========> tokenUid:", tokenUid, " to_user_id:", to_user_id)
-
-	messageListResponse, err := service.MessageList(tokenUid, toUserId)
+	// 向服务层请求数据
+	messageListResponse, err := service.MessageList(tokenUid, toUserId, pre_msg_time)
 	if err != nil {
 		fmt.Printf("messageListResponse error : %s", err)
 		// log.Infof("list error : %s", err)
 		response.Fail(ctx, err.Error(), nil)
 		return
 	}
+
 	response.Success(ctx, "success", messageListResponse)
 }

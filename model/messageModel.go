@@ -13,14 +13,14 @@ type Message struct {
 	Time      int64  `gorm:"column:time"`
 }
 
-func MessageList(userId, toUserId int64, msgCount int64) ([]Message, error) {
+func MessageList(userId, toUserId int64, aboveMsgTime int64) ([]Message, error) {
 	var messages []Message
 	db := db.GetDB()
 	var err error
 	messages = nil
 
-	// 取出最新的消息
-	err = db.Where("user_id = ? AND to_user_id = ?", userId, toUserId).Order("time DESC").Limit(int(msgCount)).Find(&messages).Error
+	// 取出大于aboveMsgTime时间的消息
+	err = db.Where("user_id = ? AND to_user_id = ? AND time >= ?", userId, toUserId, aboveMsgTime).Find(&messages).Error
 
 	if err != nil {
 		return nil, err
@@ -29,6 +29,7 @@ func MessageList(userId, toUserId int64, msgCount int64) ([]Message, error) {
 	return messages, nil
 }
 
+// 获取用户的全部历史消息
 func MessageListCommon(userId, toUserId int64) ([]Message, error) {
 	var messages []Message
 	db := db.GetDB()
@@ -36,7 +37,6 @@ func MessageListCommon(userId, toUserId int64) ([]Message, error) {
 	messages = nil
 
 	// 得到userId 和 toUserId 的全部通信消息
-
 	/*
 		SELECT * FROM
 		(SELECT content,`time` FROM messages
@@ -53,18 +53,15 @@ func MessageListCommon(userId, toUserId int64) ([]Message, error) {
 		return nil, err
 	}
 
-	// fmt.Println("MessageListCommon.........................")
-	// for _, v := range messages {
-	// 	fmt.Println("all msg ============ content:", v.Content, "  time:", v.Time)
-	// }
 	return messages, nil
 }
 
+// 消息添加
 func MessageAdd(userId, toUserId int64, content string) (*Message, error) {
 	db := db.GetDB()
 
-	// nowtime := time.Now().Format("2006-01-02 15:04:05")
-	nowtime := time.Now().Unix()
+	// 使用毫秒级时间戳
+	nowtime := time.Now().UnixNano() / 1e6
 	message := Message{
 		UserId:   userId,
 		ToUserId: toUserId,

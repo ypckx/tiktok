@@ -1,7 +1,6 @@
 package handler
 
 import (
-	"fmt"
 	"strconv"
 	"tiktok/response"
 	"tiktok/service"
@@ -11,15 +10,10 @@ import (
 
 // 关注操作
 func RelationAction(ctx *gin.Context) {
-	//token := ctx.Query("token")
-	//tokenUserId, err := common.VerifyToken(token)
-	/* if err != nil {
-		response.Fail(ctx, err.Error(), nil)
-		return
-	} */
+
 	tokens, _ := ctx.Get("UserId")
 	tokenUserId := tokens.(int64)
-
+	action := ctx.Query("action_type")
 	toUserId := ctx.Query("to_user_id")
 	touid, err := strconv.ParseInt(toUserId, 10, 64)
 	if err != nil {
@@ -27,15 +21,13 @@ func RelationAction(ctx *gin.Context) {
 		return
 	}
 
-	action := ctx.Query("action_type")
-
-	// fmt.Println("[relationHandler.go RelationAction=======] tokenUserId:", tokenUserId, " toUserId:", toUserId, " type:", action)
-
+	// 服务层操作
 	err = service.RelationAction(touid, tokenUserId, action)
 	if err != nil {
 		response.Fail(ctx, err.Error(), nil)
 		return
 	}
+
 	response.Success(ctx, "success", nil)
 }
 
@@ -43,10 +35,11 @@ func RelationAction(ctx *gin.Context) {
 func GetFollowList(ctx *gin.Context) {
 	//token := ctx.Query("token")
 	//tokenUserId, err := common.VerifyToken(token)
-	/* if err != nil {
-		response.Fail(ctx, err.Error(), nil)
-		return
-	} */
+	// if err != nil {
+	// 	response.Fail(ctx, err.Error(), nil)
+	// 	return
+	// }
+
 	tokens, _ := ctx.Get("UserId")
 	tokenUserId := tokens.(int64)
 
@@ -57,13 +50,13 @@ func GetFollowList(ctx *gin.Context) {
 		return
 	}
 
-	// fmt.Println("获取关注列表 relationHandler.go [func-GetFollowList*********]  uid:", uid, "  tokenUserId:", tokenUserId)
-
+	// 向服务层请求数据
 	followList, err := service.RelationFollowList(uid, tokenUserId)
 	if err != nil {
 		response.Fail(ctx, err.Error(), nil)
 		return
 	}
+
 	response.Success(ctx, "success", followList)
 }
 
@@ -84,12 +77,14 @@ func GetFollowerList(ctx *gin.Context) {
 		response.Fail(ctx, err.Error(), nil)
 		return
 	}
-	// fmt.Println("获取关注者列表 relationHandler.go [func-GetFollowerList*********]  uid:", uid, "  tokenUserId:", tokenUserId)
+
+	// 向服务层请求数据
 	followerList, err := service.RelationFollowerList(uid, tokenUserId)
 	if err != nil {
 		response.Fail(ctx, err.Error(), nil)
 		return
 	}
+
 	response.Success(ctx, "success", followerList)
 }
 
@@ -104,12 +99,12 @@ func GetFriendList(ctx *gin.Context) {
 		return
 	}
 
-	fmt.Println("handler func-GetFriendList  uid:", uid, "  tokenUserId:", tokenUserId)
+	// 向服务层请求数据
 	friendList, err := service.RelationFriendList(uid, tokenUserId)
-
 	if err != nil {
 		response.Fail(ctx, err.Error(), nil)
 		return
 	}
+
 	response.Success(ctx, "success", friendList)
 }

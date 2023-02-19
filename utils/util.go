@@ -62,20 +62,22 @@ func Mkdir(path string) error {
 	return nil
 }
 
+// 随机返回用户头像图片地址
 func RandomAvatarImg() string {
-
 	rand.Seed(time.Now().Unix())
 
 	index := rand.Intn(len(imgList))
 	return imgList[index]
 }
 
+// 随机返回背景图片地址
 func RandomBackgroundImg() string {
 	rand.Seed(time.Now().Unix())
 	index := rand.Intn(len(backgroundImgList))
 	return backgroundImgList[index]
 }
 
+// 随机返回用户个性签名
 func RandomSignature() string {
 	rand.Seed(time.Now().Unix())
 	index := rand.Intn(len(signatureList))

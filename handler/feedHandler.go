@@ -12,9 +12,8 @@ import (
 
 func FeedHandler(c *gin.Context) {
 	fmt.Println("FeedHandler begin==============")
-	// return
-	var userId int64
 
+	var userId int64
 	currentTime, err := strconv.ParseInt(c.Query("latest_time"), 10, 64)
 
 	if err != nil || currentTime == 0 {
@@ -29,11 +28,11 @@ func FeedHandler(c *gin.Context) {
 		return
 	}
 
+	// 向服务层请求数据
 	feedList, err := service.GetFeedList(currentTime, userId)
-	// fmt.Println("FeedHandler end========== feedList", feedList)
-
 	if err != nil {
 		response.Fail(c, err.Error(), nil)
 	}
+
 	response.Success(c, "success", feedList)
 }

@@ -2,13 +2,11 @@ package common
 
 import "strconv"
 
+// 用户消息时间
 type UserMsgInfo struct {
-	State_NewMsgCount   int64
-	State_HasReqFriends bool
+	PreMsgTime int64
 }
 
-// key-value [user_id : UserStateInfo]
-// key format: {userId}_{toUserId}
 var CurMsgInfoMap = map[string]*UserMsgInfo{}
 
 func GetKeyByUserIdAndToUserId(fromUserId, toUserId int64) string {

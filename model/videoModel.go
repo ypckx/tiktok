@@ -11,6 +11,7 @@ import (
 )
 
 type Video struct {
+	// gorm.Model
 	Id            int64  `gorm:"column:video_id; primary_key;"`
 	AuthorId      int64  `gorm:"column:author_id;"`
 	PlayUrl       string `gorm:"column:play_url;"`
@@ -26,6 +27,7 @@ func (Video) TableName() string {
 	return "videos"
 }
 
+// 添加用户上传的视频
 func InsertVideo(authorid int64, playurl, coverurl, title string) error {
 	video := Video{
 		AuthorId:      authorid,
@@ -41,9 +43,8 @@ func InsertVideo(authorid int64, playurl, coverurl, title string) error {
 	if err != nil {
 		return err
 	}
-	fmt.Println("上传视频成功!。。。。。playurl:", playurl, "   coverurl:", coverurl, "  uid:", authorid)
 
-	// 上传视频对用户作品数的影响
+	// 增加用户的作品数
 	var user User
 	err = db.Where("user_id = ?", authorid).Find(&user).Error
 	if err != nil {
@@ -51,10 +52,7 @@ func InsertVideo(authorid int64, playurl, coverurl, title string) error {
 		return errors.New("update user video count error")
 	}
 
-	fmt.Println("上传视频  uid:", authorid, "  before work_count:", user.WorkCount)
-
-	user.WorkCount = user.WorkCount + 1
-	err = db.Model(&User{}).Where("user_id = ?", authorid).Update("work_count", user.WorkCount).Error
+	err = db.Model(&User{}).Where("user_id = ?", authorid).Update("work_count", user.WorkCount+1).Error
 	if err != nil {
 		fmt.Println("add user video count error")
 		return errors.New("add user video count error")
@@ -63,6 +61,7 @@ func InsertVideo(authorid int64, playurl, coverurl, title string) error {
 	return nil
 }
 
+// 获取视频列表
 func GetVideoList(AuthorId int64) ([]Video, error) {
 	var videos []Video
 	author, err := GetUserInfo(AuthorId)
@@ -83,10 +82,11 @@ func GetVideoList(AuthorId int64) ([]Video, error) {
 	return videos, nil
 }
 
+// 获取视频流，一次最多请求30个
 func GetVideoListByFeed(currentTime int64) ([]Video, error) {
 	var videos []Video
 	db := db.GetDB()
-	err := db.Where("publish_time < ?", currentTime).Limit(20).Order("video_id DESC").Find(&videos).Error
+	err := db.Where("publish_time < ?", currentTime).Limit(30).Order("video_id DESC").Find(&videos).Error
 	if err != nil && err != gorm.ErrRecordNotFound {
 		return videos, err
 	}

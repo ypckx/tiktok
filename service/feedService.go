@@ -7,6 +7,7 @@ import (
 )
 
 func GetFeedList(currentTime int64, userId int64) (*common.FeedResponse, error) {
+	// 获取视频流列表
 	videoList, err := model.GetVideoListByFeed(currentTime)
 	if err != nil {
 		return nil, err
@@ -17,23 +18,16 @@ func GetFeedList(currentTime int64, userId int64) (*common.FeedResponse, error) 
 
 	nextTime := utils.GetCurrentTime()
 
-	// 判断用户id是否存在
-	// if userId > 0 {
-	// 	if _, ok := common.UserCurStateInfo[userId]; !ok {
-	// 		common.UserCurStateInfo[userId] = common.UserStateInfo{
-	// 			State_HasNewMsg: false,
-	// 			State_LoginTime: nextTime,
-	// 		}
-	// 	}
-	// }
-
+	// 视频最多返回30个
 	if len(videoList) == 30 {
 		nextTime = videoList[len(videoList)-1].PublishTime
 	}
 	feed.NextTime = nextTime
+
 	return feed, nil
 }
 
+// 将数据库Video结构转化为响应Video结构
 func VideoList(videoList []model.Video, userId int64) []*common.Video {
 	var err error
 	followList := make(map[int64]struct{})

@@ -2,17 +2,15 @@ package service
 
 import (
 	"errors"
-	"fmt"
 	"tiktok/common"
 	"tiktok/model"
 
 	"golang.org/x/crypto/bcrypt"
 )
 
+// 用户注册
 func UserRegister(userName, password string) (*common.UserRegisterResponse, error) {
 
-	// fmt.Println("[UserRegister] ", userName, "  ", password)
-	// return nil, nil
 	err := model.UserNameIsExist(userName)
 	if err != nil {
 		return nil, err
@@ -32,11 +30,10 @@ func UserRegister(userName, password string) (*common.UserRegisterResponse, erro
 		Token:  token,
 	}
 
-	// fmt.Println("token:", token, "  info:=============")
-
 	return registResponse, nil
 }
 
+// 用户登录
 func UserLogin(userName, password string) (*common.UserLoginResponse, error) {
 	info, err := model.GetUserInfo(userName)
 	if err != nil {
@@ -47,7 +44,8 @@ func UserLogin(userName, password string) (*common.UserLoginResponse, error) {
 	if err != nil {
 		return nil, errors.New("password error")
 	}
-	fmt.Println("username:", userName, " right================== pwd:", password)
+
+	// 获取用户token
 	token, err := common.GenToken(info.Id, userName)
 	if err != nil {
 		return nil, err
@@ -57,7 +55,6 @@ func UserLogin(userName, password string) (*common.UserLoginResponse, error) {
 		Token:  token,
 	}
 
-	fmt.Println("[UserLogin++++++++++] user_id:", loginResponse.UserId, " token:", loginResponse.Token)
 	return loginResponse, nil
 }
 
@@ -68,10 +65,11 @@ func UserInfo(userID int64) (*common.UserResponse, error) {
 		return nil, err
 	}
 	user := messageUserInfo(info)
-	// fmt.Println("userinfo 【获赞】:", user.FavoriteCount)
+
 	return &common.UserResponse{User: user}, nil
 }
 
+// 将数据库User结构转化为响应User结构
 func messageUserInfo(info model.User) *common.User {
 	return &common.User{
 		Id:              info.Id,

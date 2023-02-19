@@ -1,10 +1,5 @@
 package common
 
-// var GetUserIdByToken = map[string]int64{
-// 	"ypckx123":       1,
-// 	"zhangleidouyin": 1,
-// }
-
 type Response struct {
 	StatusCode int32  `json:"status_code"`
 	StatusMsg  string `json:"status_msg,omitempty"`

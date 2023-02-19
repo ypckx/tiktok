@@ -41,12 +41,14 @@ func FavoriteAction(ctx *gin.Context) {
 		return
 	}
 
+	// 向服务层请求数据
 	err = service.FavoriteAction(tokenUid, favInfo.VideoId, favInfo.ActionType)
 
 	if err != nil {
 		response.Fail(ctx, err.Error(), nil)
 		return
 	}
+
 	response.Success(ctx, "success", nil)
 }
 
@@ -64,11 +66,12 @@ func GetFavoriteList(ctx *gin.Context) {
 		return
 	}
 
-	// fmt.Println("[GetFavoriteList] tokenUid:", tokenUid, "  uid:", uid)
+	// 向服务层请求数据
 	favList, err := service.FavoriteList(tokenUid, uid)
 	if err != nil {
 		response.Fail(ctx, err.Error(), nil)
 		return
 	}
+
 	response.Success(ctx, "success", favList)
 }

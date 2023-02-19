@@ -7,7 +7,9 @@ import (
 	"tiktok/model"
 )
 
+// 用户关注操作
 func RelationAction(toUserId, tokenUserId int64, action string) error {
+	// 自己无法关注自己
 	if tokenUserId == toUserId {
 		return errors.New("you can't follow yourself")
 	}
@@ -27,13 +29,14 @@ func RelationAction(toUserId, tokenUserId int64, action string) error {
 	return nil
 }
 
+// 获取我关注的列表
 func RelationFollowList(userId int64, tokenUserId int64) (*common.FollowListResponse, error) {
 	followList, err := model.GetFollowList(userId, "follow")
 	if err != nil {
 		fmt.Println("service-RelationFollowList model.GetFollowList error!")
 		return nil, err
 	}
-	// log.Infof("user:%v, followList:%+v", userId, followList)
+
 	list, err := tokenFollowList(tokenUserId)
 	if err != nil {
 		return nil, err
@@ -52,13 +55,14 @@ func RelationFollowList(userId int64, tokenUserId int64) (*common.FollowListResp
 	return &followListResponse, nil
 }
 
+// 获取关注我（粉丝）的用户列表
 func RelationFollowerList(userId int64, tokenUserId int64) (*common.FollowerListResponse, error) {
 	followList, err := model.GetFollowList(userId, "follower")
 	if err != nil {
 		fmt.Println("service-RelationFollowerList model.GetFollowList error!")
 		return nil, err
 	}
-	// log.Infof("user:%v, followerList:%+v", userId, followList)
+
 	list, err := tokenFollowList(tokenUserId)
 	if err != nil {
 		return nil, err
@@ -89,15 +93,15 @@ func tokenFollowList(userId int64) (map[int64]struct{}, error) {
 	return m, nil
 }
 
-// 朋友列表要相互关注
+// 获取朋友列表（用户要相互关注才会成为朋友）
 func RelationFriendList(userId int64, tokenUserId int64) (*common.FriendListResponse, error) {
+	// 获取用户朋友列表
 	friendList, err := model.GetFriendList(userId, "follower")
 	if err != nil {
 		fmt.Println("service-RelationFollowerList model.GetFollowList error!")
 		return nil, err
 	}
 
-	// log.Infof("user:%v, followerList:%+v", userId, followList)
 	list, err := tokenFollowList(tokenUserId)
 	if err != nil {
 		return nil, err
@@ -113,15 +117,15 @@ func RelationFriendList(userId int64, tokenUserId int64) (*common.FriendListResp
 		friendListResponse.UserList[i] = follow
 
 		// 设置 userId 可以得到全部消息
-		key := common.GetKeyByUserIdAndToUserId(u.Id, userId)
-		if item, ok := common.CurMsgInfoMap[key]; !ok {
-			v := new(common.UserMsgInfo)
-			v.State_HasReqFriends = true
-			v.State_NewMsgCount = 0
-			common.CurMsgInfoMap[key] = v
-		} else {
-			item.State_HasReqFriends = true
-		}
+		// key := common.GetKeyByUserIdAndToUserId(u.Id, userId)
+		// if item, ok := common.CurMsgInfoMap[key]; !ok {
+		// 	v := new(common.UserMsgInfo)
+		// 	v.State_HasReqFriends = true
+		// 	v.State_NewMsgCount = 0
+		// 	common.CurMsgInfoMap[key] = v
+		// } else {
+		// 	item.State_HasReqFriends = true
+		// }
 	}
 
 	return &friendListResponse, nil

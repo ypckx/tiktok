@@ -13,8 +13,8 @@ import (
 func CommentAction(ctx *gin.Context) {
 	var err error
 
+	// 参数解析
 	tokenUids, _ := ctx.Get("UserId")
-
 	tokenUid := tokenUids.(int64)
 
 	video_id := ctx.Query("video_id")
@@ -37,12 +37,15 @@ func CommentAction(ctx *gin.Context) {
 		return
 	}
 
+	// 向服务层请求数据
 	commentResponse, err := service.CommentAction(commentId, videoId, tokenUid, comment_text, actionType)
 	if err != nil {
 		fmt.Printf("comment error : %s", err)
 		response.Fail(ctx, err.Error(), nil)
 		return
 	}
+
+	// 请求成功，返回数据
 	response.Success(ctx, "success", commentResponse)
 }
 
@@ -50,19 +53,14 @@ func CommentAction(ctx *gin.Context) {
 func GetCommentList(ctx *gin.Context) {
 	var err error
 	video_id := ctx.Query("video_id")
-	/* token := ctx.Query("token")
-		_, err = util.VerifyToken(token)
-		if err != nil {
-			log.Errorf("token error : %s", err)
-	   		response.Fail(ctx, err.Error(), nil)
-			return
-		} */
 	videoId, err := strconv.ParseInt(video_id, 10, 64)
 	if err != nil {
 		fmt.Printf("videoId error : %s", err)
 		response.Fail(ctx, err.Error(), nil)
 		return
 	}
+
+	// 向服务层请求数据
 	listResponse, err := service.CommentList(videoId)
 	if err != nil {
 		fmt.Printf("list error : %s", err)
@@ -70,5 +68,7 @@ func GetCommentList(ctx *gin.Context) {
 		response.Fail(ctx, err.Error(), nil)
 		return
 	}
+
+	// 请求成功，返回数据
 	response.Success(ctx, "success", listResponse)
 }

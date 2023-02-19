@@ -28,7 +28,7 @@ func MessageList(userId, toUserId int64, msgTime int64) (*common.MessageListResp
 		common.CurMsgInfoMap[key] = &common.UserMsgInfo{PreMsgTime: msgTime}
 	} else {
 		// 判断有没有新消息，若有新消息，msgTime不会和上次请求消息时间一致
-		if msgTime == common.CurMsgInfoMap[key].PreMsgTime {
+		if common.CurMsgInfoMap[key].PreMsgTime == 0 || msgTime == common.CurMsgInfoMap[key].PreMsgTime {
 			return &common.MessageListResponse{}, nil
 		}
 		messages, err = model.MessageList(toUserId, userId, msgTime)

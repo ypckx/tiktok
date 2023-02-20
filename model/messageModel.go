@@ -1,11 +1,13 @@
 package model
 
 import (
+	"fmt"
 	"tiktok/model/db"
 	"time"
 )
 
 type Message struct {
+	// gorm.Model
 	MessageId int64  `gorm:"column:message_id; primary_key;"`
 	UserId    int64  `gorm:"column:user_id"`
 	ToUserId  int64  `gorm:"column:to_user_id"`
@@ -13,14 +15,15 @@ type Message struct {
 	Time      int64  `gorm:"column:time"`
 }
 
-func MessageList(userId, toUserId int64, aboveMsgTime int64) ([]Message, error) {
+func MessageList(userId, toUserId int64, msgCount int64) ([]Message, error) {
 	var messages []Message
 	db := db.GetDB()
 	var err error
 	messages = nil
 
 	// 取出大于aboveMsgTime时间的消息
-	err = db.Where("user_id = ? AND to_user_id = ? AND time >= ?", userId, toUserId, aboveMsgTime).Find(&messages).Error
+	fmt.Println("user_id:", userId, "  to_user_id:", toUserId, "  msgCount:", msgCount)
+	err = db.Where("user_id = ? AND to_user_id = ?", userId, toUserId).Order("time Desc").Limit(int(msgCount)).Find(&messages).Error
 
 	if err != nil {
 		return nil, err
@@ -45,7 +48,7 @@ func MessageListCommon(userId, toUserId int64) ([]Message, error) {
 	*/
 
 	db.Table("(?) as t", db.Table("messages").
-		Select("content,time").
+		Select("*").
 		Where("(user_id = ? AND to_user_id = ?) OR (user_id = ? AND to_user_id = ?)", userId, toUserId, toUserId, userId)).
 		Order("time").Find(&messages)
 

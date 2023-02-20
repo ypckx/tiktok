@@ -28,6 +28,7 @@ func LikeAction(uid, vid int64) error {
 	}
 	result := db.Where("user_id = ? and video_id = ?", uid, vid).Find(&Favorite{})
 	if result.RowsAffected != 0 {
+		fmt.Println("you have liked this video -------------- -------- uid:", uid, "   vid:", vid)
 		return errors.New("you have liked this video")
 	}
 
@@ -36,12 +37,16 @@ func LikeAction(uid, vid int64) error {
 		return err
 	}
 
+	fmt.Println("LikeAction -------------- --------")
+
 	// 点赞对视频的影响
 	var video Video
 	err = db.Where("video_id = ?", vid).Find(&video).Error
 	if err != nil {
 		return err
 	}
+
+	fmt.Println("before video.FavoriteCount:", video.FavoriteCount, " vid:", vid)
 
 	result = db.Model(&Video{}).Where("video_id = ?", vid).Update("favorite_count", video.FavoriteCount+1)
 	if result.RowsAffected == 0 {
@@ -55,6 +60,9 @@ func LikeAction(uid, vid int64) error {
 		fmt.Println("增加当前用户点赞数 error:", err.Error())
 		return err
 	}
+
+	fmt.Println("before add user.FavCount:", user.FavCount, " uid:", user.Id)
+
 	result = db.Model(&User{}).Where("user_id = ?", uid).Update("favorite_count", user.FavCount+1)
 	if result.RowsAffected == 0 {
 		return errors.New("增加当前用户点赞数 error")
@@ -67,6 +75,9 @@ func LikeAction(uid, vid int64) error {
 		fmt.Println("增加视频作者的总点赞数 error:", err.Error())
 		return err
 	}
+
+	fmt.Println("before 增加视频作者的总点赞数:", author.TotalFav, " uid:", author.Id)
+
 	result = db.Model(&User{}).Where("user_id = ?", author.Id).Update("total_favorited", author.TotalFav+1)
 	if result.RowsAffected == 0 {
 		return errors.New("增加视频作者的总点赞数 error")

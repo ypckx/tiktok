@@ -4,7 +4,8 @@ import "strconv"
 
 // 用户消息时间
 type UserMsgInfo struct {
-	PreMsgTime int64
+	State_HasNewMsg   bool
+	State_NewMsgCount int64
 }
 
 var CurMsgInfoMap = map[string]*UserMsgInfo{}

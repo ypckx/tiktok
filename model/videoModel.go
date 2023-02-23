@@ -94,7 +94,7 @@ func GetVideoListByFeed(currentTime int64) ([]Video, error) {
 	for i, v := range videos {
 		author, err := GetUserInfo(v.AuthorId)
 
-		// CacheSetAuthor(v.Id, v.AuthorId)
+
 		if err != nil {
 			return videos, err
 		}
@@ -106,24 +106,3 @@ func GetVideoListByFeed(currentTime int64) ([]Video, error) {
 	return videos, nil
 }
 
-// func CacheSetAuthor(videoid, authorid int64) {
-// 	key := strconv.FormatInt(videoid, 10)
-// 	err := common.CacheHSet("video", key, authorid)
-// 	if err != nil {
-// 		// log.Errorf("set cache error:%+v", err)
-// 	}
-// }
-
-// func CacheGetAuthor(videoid int64) (int64, error) {
-// 	key := strconv.FormatInt(videoid, 10)
-// 	data, err := common.CacheHGet("video", key)
-// 	if err != nil {
-// 		return 0, err
-// 	}
-// 	uid := int64(0)
-// 	err = json.Unmarshal(data, &uid)
-// 	if err != nil {
-// 		return 0, err
-// 	}
-// 	return uid, nil
-// }

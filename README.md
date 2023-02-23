@@ -61,3 +61,6 @@ https://bytedance.feishu.cn/docx/Wwa4dfwScogfjLxclXKcStGEncd
 
 【开营直播】第五届字节跳动青训营后端专场 
 https://bytedance.feishu.cn/docx/WZDddh2Lqoyfu6x93u1c8km9nug
+
+Apk下载地址
+https://bytedance.feishu.cn/docs/doccnM9KkBAdyDhg8qaeGlIz7S7#

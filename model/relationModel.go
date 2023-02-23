@@ -67,8 +67,7 @@ func FollowAction(userId, toUserId int64) error {
 	if err1 != nil || err2 != nil {
 		fmt.Println("[FollowAction] update user follow error")
 	}
-	// go CacheChangeUserCount(userId, add, "follow")
-	// go CacheChangeUserCount(toUserId, add, "follower")
+
 	return nil
 }
 
@@ -106,9 +105,6 @@ func UnFollowAction(userId, toUserId int64) error {
 		fmt.Println("[UnFollowAction] update user follow error")
 	}
 
-	// log.Debug("unfollow update user cache")
-	// go CacheChangeUserCount(userId, sub, "follow")
-	// go CacheChangeUserCount(toUserId, sub, "follower")
 	return nil
 }
 
@@ -167,25 +163,3 @@ func GetFriendList(userId int64, usertype string) ([]User, error) {
 
 	return list, nil
 }
-
-// func CacheChangeUserCount(userid, op int64, ftype string) {
-// 	uid := strconv.FormatInt(userid, 10)
-// 	mutex, _ := common.GetLock("user_" + uid)
-// 	defer common.UnLock(mutex)
-// 	user, err := CacheGetUser(userid)
-// 	if err != nil {
-// 		// log.Infof("user:%v miss cache", userid)
-// 		return
-// 	}
-// 	switch ftype {
-// 	case "follow":
-// 		user.Follow += op
-// 	case "follower":
-// 		user.Follower += op
-// 	case "like":
-// 		user.FavCount += op
-// 	case "liked":
-// 		user.TotalFav += op
-// 	}
-// 	CacheSetUser(user)
-// }

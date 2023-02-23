@@ -74,8 +74,7 @@ func InsertUser(userName, password string) (*User, error) {
 	if result.Error == nil {
 		fmt.Println("InsertUser username:", user.Name, " pwd:", user.Password, "   OK!")
 	}
-	// log.Infof("regist user:%+v", user)
-	// go CacheSetUser(user)
+
 	return &user, nil
 }
 
@@ -86,10 +85,7 @@ func GetUserInfo(u interface{}) (User, error) {
 	var err error
 	switch u := u.(type) {
 	case int64:
-		// user, err = CacheGetUser(u)
-		// if err == nil {
-		// 	return user, nil
-		// }
+
 		err = db.Where("user_id = ?", u).Find(&user).Error
 
 	case string:
@@ -100,30 +96,8 @@ func GetUserInfo(u interface{}) (User, error) {
 	if err != nil {
 		return user, errors.New("user error")
 	}
-	// go CacheSetUser(user)
-	// log.Infof("%+v", user)
+
 
 	return user, nil
 }
 
-// func CacheSetUser(u User) {
-// 	uid := strconv.FormatInt(u.Id, 10)
-// 	err := common.CacheSet("user_"+uid, u)
-// 	if err != nil {
-// 		// log.Errorf("set cache error:%+v", err)
-// 	}
-// }
-
-// func CacheGetUser(uid int64) (User, error) {
-// 	key := strconv.FormatInt(uid, 10)
-// 	data, err := common.CacheGet("user_" + key)
-// 	user := User{}
-// 	if err != nil {
-// 		return user, err
-// 	}
-// 	err = json.Unmarshal(data, &user)
-// 	if err != nil {
-// 		return user, err
-// 	}
-// 	return user, nil
-// }
